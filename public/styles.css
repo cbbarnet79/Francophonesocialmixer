@@ -20,9 +20,9 @@ h2{font-size:clamp(1.55rem,3vw,2.1rem)}
 p{line-height:1.55;margin:0 0 16px}
 .card,fieldset{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:clamp(15px,3vw,24px);margin:18px 0;min-width:0}
 fieldset legend{font-weight:750;padding:0 7px}
-.choice{display:block;margin:7px 0;line-height:1.5}
-input[type=radio]{accent-color:var(--green);margin:0 9px 0 0}
-input:not([type=radio]),select,textarea{display:block;width:100%;padding:10px 12px;margin:8px 0;border:1px solid #9aa597;border-radius:8px;background:white;color:var(--ink);font:inherit}
+.choice{display:flex;align-items:baseline;gap:9px;margin:7px 0;line-height:1.5}
+.choice input{accent-color:var(--green);margin:0;flex:none}
+input:not([type=checkbox]),select,textarea{display:block;width:100%;padding:10px 12px;margin:8px 0;border:1px solid #9aa597;border-radius:8px;background:white;color:var(--ink);font:inherit}
 textarea{resize:vertical}
 button,a.download{border:1px solid var(--green);border-radius:999px;padding:9px 16px;background:var(--green);color:white;font:inherit;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;min-height:42px}
 button.secondary,a.download{background:transparent;color:var(--green)}

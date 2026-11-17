@@ -1,4 +1,4 @@
-import { canDos, goals, guests, questions } from './curriculum.js';
+import { canDos, guests, questions } from './curriculum.js';
 import { connectGuest, microphoneMessage } from './live.js';
 
 const screen = document.querySelector('#screen');
@@ -8,7 +8,8 @@ const status = document.querySelector('#status');
 const el = id => document.getElementById(id);
 let step = 0;
 let mode;
-let goal;
+let selectedGoals = [];
+const goalLimit = 3;
 let code;
 let live;
 let connection;
@@ -32,7 +33,7 @@ function draw() {
   clearMedia();
   status.textContent = '';
   restart.hidden = step === 0;
-  progress.innerHTML = ['Set a goal', 'Meet the guests', 'Voice note & reflection']
+  progress.innerHTML = ['Choose goals', 'Meet the guests', 'Voice note & reflection']
     .map((label, index) => '<li' + (index === (step === 0 ? 0 : step <= guests.length ? 1 : 2)
       ? ' aria-current="step"' : '') + '>' + label + '</li>').join('');
   if (step === 0) welcome();
@@ -47,11 +48,11 @@ function welcome() {
     <p>Meet three French-speaking guests. Find someone you’d like to get to know better and two things you have in common.</p>
     <p>Introduce yourself in French. You can make up personal details.</p>
     <form id="welcome">
-      <fieldset>
-        <legend>What would you like to try in French?</legend>
-        ${goals.map((item, i) => `<label class="choice"><input name="goal" type="radio" value="${i}" required>${item}</label>`).join('')}
-        <label class="choice"><input id="custom-choice" name="goal" type="radio" value="custom" required>Write my own goal</label>
-        <label id="custom-label" hidden>Your goal<input id="custom" maxlength="150"></label>
+      <fieldset aria-describedby="goal-instructions">
+        <legend>What would you like to work on most?</legend>
+        <p id="goal-instructions">These Can-Do statements describe skills you’ve practiced in French Beginner 1. Select up to three to focus on during the mixer.</p>
+        ${canDos.map((item, i) => `<label class="choice"><input name="goal" type="checkbox" value="${i}"><span>${item}</span></label>`).join('')}
+        <p id="goal-count" role="status">0 of ${goalLimit} selected</p>
       </fieldset>
       <label for="mode">Conversation mode</label>
       <select id="mode"><option value="demo">Scripted demo</option><option value="live">Live French voice</option></select>
@@ -63,18 +64,26 @@ function welcome() {
     el('pilot').hidden = !isLive;
     el('code').required = isLive;
   };
-  el('welcome').onchange = () => {
-    el('custom-label').hidden = !el('custom-choice').checked;
-    el('custom').required = el('custom-choice').checked;
-  };
-  el('welcome').onsubmit = event => {
+  const form = el('welcome');
+  const choices = [...form.querySelectorAll('input[name="goal"]')];
+  form.addEventListener('change', event => {
+    if (event.target.name !== 'goal') return;
+    const count = choices.filter(choice => choice.checked).length;
+    choices.forEach(choice => {
+      choice.disabled = count >= goalLimit && !choice.checked;
+    });
+    el('goal-count').textContent = count + ' of ' + goalLimit + ' selected';
+    status.textContent = '';
+  });
+  form.onsubmit = event => {
     event.preventDefault();
-    const selected = new FormData(event.target).get('goal');
-    goal = selected === 'custom' ? el('custom').value.trim() : goals[Number(selected)];
-    if (!goal) {
-      status.textContent = 'Write a short goal before continuing.';
+    const checked = choices.filter(choice => choice.checked);
+    if (!checked.length || checked.length > goalLimit) {
+      status.textContent = 'Select one to three Can-Do statements before continuing.';
+      choices[0].focus();
       return;
     }
+    selectedGoals = checked.map(choice => canDos[Number(choice.value)]);
     mode = el('mode').value;
     code = el('code').value.trim();
     step = 1;
@@ -112,13 +121,18 @@ function guestScreen() {
   screen.innerHTML = `
     <small>Guest ${step} of ${guests.length}</small>
     <h1 lang="fr">${guest.name}</h1>
-    <p id="goal"></p>
+    <p>Your mixer goals</p>
+    <ul id="goal-list"></ul>
     <div class="card" id="conversation"></div>
     <div class="card"><label for="notes">Your notes (optional)</label>
       <textarea id="notes" rows="2" maxlength="600" placeholder="What might you have in common?"></textarea>
     </div>
     <button id="next" disabled>${step === guests.length ? 'Voice note & reflection' : 'Meet the next guest'}</button>`;
-  el('goal').textContent = 'Your goal: ' + goal;
+  selectedGoals.forEach(goal => {
+    const item = document.createElement('li');
+    item.textContent = goal;
+    el('goal-list').append(item);
+  });
   el('notes').value = notes.get(shownStep) || '';
   el('notes').oninput = () => notes.set(shownStep, el('notes').value);
   el('next').onclick = () => {
@@ -261,7 +275,7 @@ function finalScreen() {
         <p>What did you do in French during the mixer that you feel more confident doing now?</p>
         <label for="can-do">Choose one French Beginner 1 Can-Do statement</label>
         <select id="can-do" required><option value="">Select a skill</option>
-          ${canDos.map(item => `<option>${item}</option>`).join('')}
+          ${canDos.map(item => `<option value="${item}">${item}${selectedGoals.includes(item) ? " (starting goal)" : ""}</option>`).join('')}
         </select>
         <label for="reflection">Describe one specific moment when you used this skill. Write in English or French.</label>
         <textarea id="reflection" rows="3" maxlength="800" required></textarea>
@@ -357,7 +371,7 @@ function prepareDelivery() {
   const extension = mime === 'audio/mp4' ? 'm4a' : mime === 'audio/ogg' ? 'ogg' : 'webm';
   if (reflectionUrl) URL.revokeObjectURL(reflectionUrl);
   reflectionUrl = URL.createObjectURL(new Blob([
-    'Mixer goal: ' + goal + '\nCan-Do: ' + el('can-do').value + '\n\n' + el('reflection').value.trim() + '\n',
+    'Mixer goals:\n' + selectedGoals.map(goal => '- ' + goal).join('\n') + '\n\nCan-Do: ' + el('can-do').value + '\n\n' + el('reflection').value.trim() + '\n',
     'Next goal: ' + el('next-goal').value.trim() + '\n'
   ], { type: 'text/plain' }));
   el('voice-file').href = audioUrl;
@@ -376,6 +390,7 @@ restart.onclick = () => {
   audioUrl = null;
   reflectionUrl = null;
   notes.clear();
+  selectedGoals = [];
   step = 0;
   draw();
 };

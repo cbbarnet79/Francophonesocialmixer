@@ -1,15 +1,12 @@
 export const canDos = [
-  'I can greet someone and introduce myself.',
-  'I can ask and say where someone is from.',
-  'I can ask and say what languages someone speaks.',
-  'I can ask and answer a simple question about work or interests.',
-  'I can ask someone to repeat or speak more slowly.'
-];
-
-export const goals = [
-  'Introduce myself and ask the guest’s name.',
-  'Ask one follow-up question.',
-  'Ask for repetition or clarification in French.'
+  'Introduce themselves and get acquainted with others (e.g., greet someone, say and spell their name, ask someone’s name, and say goodbye).',
+  'Talk about nationality, origin, and languages.',
+  'Ask for and give basic personal information (e.g., age, birthday, profession, and marital/family status).',
+  'Ask for and give basic contact information, including telephone number and email address.',
+  'Share basic information about another person (e.g., name, age, nationality, profession, family status, and interests).',
+  'Talk about their language learning, including their reasons and motivation for learning French.',
+  'Give basic information about an event (e.g., type of event, location, day/date, and year).',
+  'Use basic communication strategies when needed, such as asking politely for help or clarification.'
 ];
 
 export const guests = [
