@@ -55,8 +55,8 @@ function welcome() {
         <p id="goal-count" role="status">0 of ${goalLimit} selected</p>
       </fieldset>
       <label for="mode">Conversation mode</label>
-      <select id="mode"><option value="demo">Scripted demo</option><option value="live">Live French voice</option></select>
-      <label id="pilot" hidden>Class access code<input id="code" type="password" maxlength="150"></label>
+      <select id="mode"><option value="live" selected>Live French voice</option><option value="demo">Scripted demo</option></select>
+      <label id="pilot">Class access code<input id="code" type="password" maxlength="150" required></label>
       <button type="submit">Meet the first guest</button>
     </form>`;
   el('mode').onchange = () => {
