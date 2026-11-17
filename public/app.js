@@ -135,6 +135,7 @@ function guestScreen() {
     <div class="card" id="conversation"></div>
     <section class="card" aria-labelledby="phrase-bank">
       <h2 id="phrase-bank">French phrase bank</h2>
+      <h3>Ask for clarification or repetition</h3>
       <p>Try one of these aloud if you need help understanding the guest.</p>
       <ul>
         <li><strong lang="fr">Je ne comprends pas.</strong> (I don’t understand.)</li>
@@ -142,6 +143,12 @@ function guestScreen() {
         <li><strong lang="fr">Vous pouvez parler plus lentement ?</strong> (Could you speak more slowly?)</li>
         <li><strong lang="fr">Que signifie … ?</strong> (What does … mean?)</li>
         <li><strong lang="fr">Vous avez dit … ?</strong> (Did you say …?)</li>
+      </ul>
+      <h3>Ask the guest a question</h3>
+      <p>When it’s your turn, try one of these if you’re unsure what to ask.</p>
+      <ul>
+        <li><strong lang="fr">Qu’est-ce que vous aimez faire ?</strong> (What do you like to do?)</li>
+        <li><strong lang="fr">Quelles langues parlez-vous ?</strong> (What languages do you speak?)</li>
       </ul>
     </section>
     <p>Say hello, ask one or two short questions toward the end, and say goodbye.</p>
