@@ -228,7 +228,7 @@ function guestScreen() {
     <p>Connect and answer three short questions from the guest, starting with your name. When the guest says « À vous ! », ask one or two short questions of your own. Use Start speaking and Finish speaking for each turn. Your microphone audio is sent to OpenAI during live conversation.</p>
     <p>You have up to four minutes with this guest once you connect, including any pauses. Move on when you’re ready. If the guest asks you to repeat, try saying it more slowly or using simpler words.</p>
     <button id="connect">Connect microphone</button>
-    <button id="demo" class="secondary">Use scripted demo</button>
+    <button id="demo" class="secondary" hidden>Use scripted demo</button>
     <audio id="guest-audio" class="remote" autoplay playsinline></audio>
     <div class="actions" id="voice-actions" hidden>
       <button id="turn" disabled>Start speaking</button>
@@ -248,11 +248,15 @@ function guestScreen() {
   };
   el('connect').onclick = async () => {
     el('connect').disabled = true;
+    el('demo').hidden = true;
     status.textContent = 'Connecting…';
     connection = new AbortController();
     const timeout = setTimeout(() => {
       connection?.abort();
-      if (step === shownStep) status.textContent = 'Connection timed out. Retry or use the scripted demo.';
+      if (step === shownStep && el('demo')) {
+        el('demo').hidden = false;
+        status.textContent = 'Connection timed out. Retry or use the scripted demo.';
+      }
     }, 28_000);
     try {
       const session = await connectGuest({
@@ -263,7 +267,7 @@ function guestScreen() {
           busy = value;
           updateButtons();
         },
-        onClose: () => {
+        onClose: (connectionLost) => {
           const button = el('connect');
           if (step !== shownStep || !button) return;
           live = null;
@@ -271,6 +275,7 @@ function guestScreen() {
           talking = false;
           button.hidden = false;
           button.disabled = false;
+          if (connectionLost) el('demo').hidden = false;
           el('voice-actions').hidden = true;
           updateButtons();
         }
@@ -281,7 +286,10 @@ function guestScreen() {
       el('voice-actions').hidden = false;
       updateButtons();
     } catch (error) {
-      if (step === shownStep) status.textContent = error.message;
+      if (step === shownStep && el('demo')) {
+        el('demo').hidden = false;
+        status.textContent = error.message;
+      }
     } finally {
       clearTimeout(timeout);
     }

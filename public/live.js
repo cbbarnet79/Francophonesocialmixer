@@ -19,7 +19,7 @@ export async function connectGuest({ guest, guestName, code, audio, signal, onSt
   let commitTimer;
   let sessionTimer;
 
-  function close() {
+  function close(connectionLost = false) {
     if (closed) return;
     closed = true;
     clearTimeout(sessionTimer);
@@ -27,7 +27,7 @@ export async function connectGuest({ guest, guestName, code, audio, signal, onSt
     stream?.getTracks().forEach(track => track.stop());
     peer.close();
     audio.srcObject = null;
-    onClose();
+    onClose(connectionLost);
   }
 
   const send = (type, details = {}) => channel.send(JSON.stringify({ type, ...details }));
@@ -76,7 +76,7 @@ export async function connectGuest({ guest, guestName, code, audio, signal, onSt
 
     peer.addEventListener('connectionstatechange', () => {
       if (['failed', 'disconnected'].includes(peer.connectionState)) {
-        close();
+        close(true);
         onStatus('Connection lost. Reconnect or use the scripted demo.');
       }
     });
