@@ -53,7 +53,7 @@ function welcome() {
       <h2 id="ai-notice">Using AI in this activity</h2>
       <p>The live guests use OpenAI. What you say during a live conversation is sent to OpenAI to generate the guest’s replies. AI can make mistakes or misunderstand your French. If a reply or suggestion seems wrong, check with your instructor.</p>
       <p>You may use your first name or a made-up name. Keep your last name and other identifying details private. If you practice giving a street address, phone number, or email address, make it up.</p>
-      <p>At the end, download your French voice note and written reflection and submit them through Matrix or as your instructor directs. Your instructor can listen to the recording and read your reflection to give you feedback once you share the files.</p>
+      <p><strong>What your instructor can access:</strong> Your instructor can listen to your final French voice note and read your written reflection after you submit those files through Matrix or as directed in class. The mixer does not give your instructor recordings or transcripts of your three live guest conversations.</p>
     </section>
     <form id="welcome">
       <fieldset aria-describedby="goal-instructions">
@@ -312,7 +312,7 @@ function finalScreen() {
     </div>
     <div class="card" id="delivery" hidden>
       <h2>Share with your instructor</h2>
-      <p>Download the voice note and reflection and submit both through Matrix or as directed in class. Your instructor can access the files after you share them and use them to give you feedback.</p>
+      <p>Download your final French voice note and written reflection and submit them through Matrix or as directed in class. Once you share them, your instructor can listen to the voice note and read your reflection to give you feedback. The mixer does not share recordings or transcripts of your guest conversations with your instructor.</p>
       <div class="actions"><a class="download" id="voice-file">Download voice note</a><a class="download" id="reflection-file">Download reflection</a></div>
     </div>`;
   guests.forEach((guest, index) => {
