@@ -144,7 +144,7 @@ function guestScreen() {
         <li><strong lang="fr">Vous avez dit … ?</strong> (Did you say …?)</li>
       </ul>
     </section>
-    <p>Say hello, ask three short questions, and say goodbye.</p>
+    <p>Say hello, ask one or two short questions toward the end, and say goodbye.</p>
     <div class="card">
       <label for="notes">Your notes (optional)</label>
       <p id="notes-help">If you discover something you have in common with this guest, write it in the box below. After you meet all three guests, your notes can help you choose whom you’d like to get to know better and name two things you have in common in your final French voice note.</p>
@@ -199,7 +199,7 @@ function guestScreen() {
   }
 
   el('conversation').innerHTML = `
-    <p>Connect and answer the guest’s two opening questions. Then it’s your turn to ask three short questions. Use Start speaking and Finish speaking for each turn. Your microphone audio is sent to OpenAI during live conversation.</p>
+    <p>Connect and answer three short questions from the guest, starting with your name. When the guest says « À vous ! », ask one or two short questions of your own. Use Start speaking and Finish speaking for each turn. Your microphone audio is sent to OpenAI during live conversation.</p>
     <p>You have up to four minutes with this guest once you connect, including any pauses. Move on when you’re ready. If the guest asks you to repeat, try saying it more slowly or using simpler words.</p>
     <button id="connect">Connect microphone</button>
     <button id="demo" class="secondary">Use scripted demo</button>
