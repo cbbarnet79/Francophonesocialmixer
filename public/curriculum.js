@@ -1,10 +1,10 @@
 export const canDos = [
-  'Introduce themselves and get acquainted with others (e.g., greet someone, say and spell their name, ask someone’s name, and say goodbye).',
+  'Introduce yourself and get acquainted with others (e.g., greet someone, say and spell your name, ask someone’s name, and say goodbye).',
   'Talk about nationality, origin, and languages.',
   'Ask for and give basic personal information (e.g., age, birthday, profession, and marital/family status).',
   'Ask for and give basic contact information, including telephone number and email address.',
   'Share basic information about another person (e.g., name, age, nationality, profession, family status, and interests).',
-  'Talk about their language learning, including their reasons and motivation for learning French.',
+  'Talk about your language learning, including your reasons and motivation for learning French.',
   'Give basic information about an event (e.g., type of event, location, day/date, and year).',
   'Use basic communication strategies when needed, such as asking politely for help or clarification.'
 ];
