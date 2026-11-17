@@ -52,7 +52,8 @@ function draw() {
   if (step === 0) welcome();
   else if (step <= guests.length) guestScreen();
   else finalScreen();
-  screen.focus();
+  screen.focus({ preventScroll: true });
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 function welcome() {
