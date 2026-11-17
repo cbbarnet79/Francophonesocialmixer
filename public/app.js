@@ -49,7 +49,12 @@ function welcome() {
     <h1>Francophone<br>Social Mixer</h1>
     <p>Meet three French-speaking guests. Find someone you’d like to get to know better and two things you have in common.</p>
     <p><strong>Allow about 20 minutes.</strong> Each of the three live guest sessions lasts up to four minutes (up to 12 minutes total). The 20 minutes also includes choosing your goals, recording your final French voice note, and completing the Can-Do reflection.</p>
-    <p>Introduce yourself in French using a made-up name and details. Use fictional street addresses, phone numbers, and email addresses if you practice sharing contact information. Keep real personal details out of conversations, notes, and recordings.</p>
+    <section class="card" aria-labelledby="ai-notice">
+      <h2 id="ai-notice">Using AI in this activity</h2>
+      <p>The live guests use OpenAI. What you say during a live conversation is sent to OpenAI to generate the guest’s replies. AI can make mistakes or misunderstand your French. If a reply or suggestion seems wrong, check with your instructor.</p>
+      <p>You may use your first name or a made-up name. Keep your last name and other identifying details private. If you practice giving a street address, phone number, or email address, make it up.</p>
+      <p>At the end, download your French voice note and written reflection and submit them through Matrix or as your instructor directs. Your instructor can listen to the recording and read your reflection to give you feedback once you share the files.</p>
+    </section>
     <form id="welcome">
       <fieldset aria-describedby="goal-instructions">
         <legend>What would you like to work on most?</legend>
@@ -126,7 +131,7 @@ function guestScreen() {
     <h1 lang="fr">${guest.name}</h1>
     <p>Your mixer goals</p>
     <ul id="goal-list"></ul>
-    <p>Use made-up personal and contact details when you speak or take notes.</p>
+    <p>You may use your first name. Leave out your last name and use made-up contact details when you speak or take notes.</p>
     <div class="card" id="conversation"></div>
     <p>Say hello, ask three short questions, and say goodbye.</p>
     <div class="card">
@@ -274,7 +279,7 @@ function finalScreen() {
       <div class="card">
         <h2>French voice note</h2>
         <p>You have up to one minute to record. In French, name the guest you’d like to get to know better and say two things you have in common.</p>
-        <p>Use made-up personal details. Leave out real names, street addresses, phone numbers, and email addresses.</p>
+        <p>You may use your first name. Leave out your last name and any real street address, phone number, or email address.</p>
         <p lang="fr">Je choisis… Moi aussi, … Moi aussi, …</p>
         <button id="record" type="button">Record voice note</button>
         <audio id="playback" controls hidden></audio>
@@ -286,7 +291,7 @@ function finalScreen() {
         <select id="can-do" required><option value="">Select a skill</option>
           ${canDos.map(item => `<option value="${item}">${item}${selectedGoals.includes(item) ? " (starting goal)" : ""}</option>`).join('')}
         </select>
-        <label for="reflection">Describe one specific moment when you used this skill. Write in English or French and leave out real personal details.</label>
+        <label for="reflection">Describe one specific moment when you used this skill. Write in English or French. Leave out last names and real contact details.</label>
         <textarea id="reflection" rows="3" maxlength="800" required></textarea>
         <small>Example: I asked a guest to repeat where she was from, and I understood her the second time.</small>
         <label for="next-goal">What’s one thing you’d like to try next? (optional)</label>
@@ -298,7 +303,7 @@ function finalScreen() {
     </form>
     <div class="card" id="feedback" hidden>
       <h2>Two suggestions for your spoken French</h2>
-      <p>Optional. Review your voice note for real personal details before sending it. If you ask for AI feedback, OpenAI receives your voice note and selected Can-Do. We don’t send your guest notes or written reflection.</p>
+      <p>Optional. Check that your recording leaves out last names and real contact details. If you ask for AI feedback, OpenAI receives your voice note and selected Can-Do. We don’t send your guest notes or written reflection. AI can make mistakes. Check with your instructor if a suggestion seems wrong.</p>
       <label id="feedback-code-label" for="feedback-code" hidden>Class access code</label>
       <input id="feedback-code" type="password" maxlength="150" hidden>
       <button id="get-feedback" type="button">Get AI feedback</button>
@@ -307,7 +312,7 @@ function finalScreen() {
     </div>
     <div class="card" id="delivery" hidden>
       <h2>Share with your instructor</h2>
-      <p>Download both files and submit them together to your instructor through Matrix or as directed in class.</p>
+      <p>Download the voice note and reflection and submit both through Matrix or as directed in class. Your instructor can access the files after you share them and use them to give you feedback.</p>
       <div class="actions"><a class="download" id="voice-file">Download voice note</a><a class="download" id="reflection-file">Download reflection</a></div>
     </div>`;
   guests.forEach((guest, index) => {
