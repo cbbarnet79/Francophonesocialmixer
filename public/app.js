@@ -320,7 +320,10 @@ function guestScreen() {
 function finalScreen() {
   screen.innerHTML = `
     <h1>Who would you like to meet again?</h1>
-    <details id="notes-review" class="card" hidden><summary>Your guest notes</summary><div id="notes-list"></div></details>
+    <section class="card" aria-labelledby="guest-review-title">
+      <h2 id="guest-review-title">Guests you met</h2>
+      <ul id="notes-list"></ul>
+    </section>
     <form id="final">
       <div class="card">
         <h2>French voice note</h2>
@@ -363,11 +366,12 @@ function finalScreen() {
     </div>`;
   guests.forEach((guest, index) => {
     const entry = notes.get(index + 1)?.trim();
-    if (!entry) return;
-    const item = document.createElement('p');
-    item.textContent = guest.name + ': ' + entry;
+    const item = document.createElement('li');
+    const name = document.createElement('strong');
+    name.textContent = guest.name;
+    item.append(name);
+    if (entry) item.append(' — ' + entry);
     el('notes-list').append(item);
-    el('notes-review').hidden = false;
   });
   el('record').onclick = recordVoice;
   el('final').oninput = resetDelivery;
