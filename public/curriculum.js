@@ -16,9 +16,9 @@ export const guests = [
 ];
 
 export const questions = [
-  ['Vous venez d’où ?', g => 'Je viens de ' + g.origin + '. Et vous ?'],
-  ['Vous parlez quelles langues ?', g => 'Je parle ' + g.languages + '. Et vous ?'],
-  ['Qu’est-ce que vous faites dans la vie ?', g => 'Je suis ' + g.job + '. Et vous ?'],
-  ['Qu’est-ce que vous aimez ?', g => 'J’aime ' + g.interests + '. Et vous ?'],
-  ['Pourquoi vous apprenez l’anglais ?', g => 'J’apprends l’anglais ' + g.reason + '. Et vous, pourquoi vous apprenez le français ?']
+  ['Vous venez d’où ?', g => 'Je viens de ' + g.origin + '.'],
+  ['Vous parlez quelles langues ?', g => 'Je parle ' + g.languages + '.'],
+  ['Qu’est-ce que vous faites dans la vie ?', g => 'Je suis ' + g.job + '.'],
+  ['Qu’est-ce que vous aimez ?', g => 'J’aime ' + g.interests + '.'],
+  ['Pourquoi vous apprenez l’anglais ?', g => 'J’apprends l’anglais ' + g.reason + '.']
 ];

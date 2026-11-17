@@ -127,6 +127,7 @@ function guestScreen() {
     <div class="card"><label for="notes">Your notes (optional)</label>
       <textarea id="notes" rows="2" maxlength="600" placeholder="What might you have in common?"></textarea>
     </div>
+    <p>Say hello, ask three short questions, and say goodbye. If you find something you have in common, jot it down.</p>
     <button id="next" disabled>${step === guests.length ? 'Voice note & reflection' : 'Meet the next guest'}</button>`;
   selectedGoals.forEach(goal => {
     const item = document.createElement('li');
@@ -145,7 +146,7 @@ function guestScreen() {
   }
 
   if (mode === 'demo') {
-    let line = 'Bonjour ! Je m’appelle ' + guest.name + '. Et vous ?';
+    let line = 'Bonjour ! Je m’appelle ' + guest.name + '. Je vous écoute.';
     el('conversation').innerHTML = `
       <p>Say your introduction or question aloud, then use the buttons to hear a scripted reply.</p>
       <button id="greet" class="secondary">Hear the greeting</button>
@@ -162,7 +163,7 @@ function guestScreen() {
       speak(line, rate);
     }
     el('greet').onclick = () => {
-      line = 'Bonjour ! Je m’appelle ' + guest.name + '. Et vous ?';
+      line = 'Bonjour ! Je m’appelle ' + guest.name + '. Je vous écoute.';
       play(.84);
     };
     el('ask').onclick = () => {

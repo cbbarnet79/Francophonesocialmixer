@@ -109,7 +109,7 @@ export async function connectGuest({ guest, guestName, code, audio, signal, onSt
 
     onBusy(true);
     onStatus('The guest is saying hello…');
-    prompt(`Start the mixer as ${guestName}. Say exactly: « Bonjour ! Je m’appelle ${guestName}. Et vous, comment vous appelez-vous ? »`);
+    prompt(`Start the mixer as ${guestName}. Say exactly: « Bonjour ! Je m’appelle ${guestName}. Je vous écoute. »`);
 
     return {
       close,
