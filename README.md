@@ -4,7 +4,7 @@ A final speaking task for Tennessee Language Center’s French Beginner 1 course
 
 ## Try the scripted demo
 
-From the repository folder, run `python -m http.server 8000 --directory public` (on Windows, try `py` in place of `python`). Open http://localhost:8000 and pick **Scripted demo**. If a local French voice is installed in your browser or operating system, you can hear scripted guest replies. The replies also appear in French on screen. The final voice note uses the browser microphone and can be downloaded with the reflection. The demo requires no OpenAI account.
+From the repository folder, run `python -m http.server 8000 --directory public` (on Windows, try `py` in place of `python`). Open http://localhost:8000 and pick **Scripted demo**. Scripted guest audio uses your browser’s text-to-speech support. A French voice must be available to hear it. The replies also appear in French on screen. The final voice note uses the browser microphone and can be downloaded with the reflection. The demo requires no OpenAI account.
 
 The Can-Do menu in `public/curriculum.js` uses draft wording based on the course objectives. Verify that wording against the finalized course list before sharing with learners.
 

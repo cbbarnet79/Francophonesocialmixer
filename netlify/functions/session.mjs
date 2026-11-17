@@ -11,9 +11,13 @@ function instructions({ name, origin, languages, job, interests, reason }) {
 
 export default async function handler(request) {
   if (request.method !== 'POST') return problem(405, 'Use POST.');
-  const openaiKey = process.env.OPENAI_API_KEY;
-  const classCode = process.env.MIXER_CLASS_CODE;
-  if (!openaiKey || !classCode) return problem(503, 'Live voice is not configured. Use the scripted demo.');
+  const getSetting = key => (globalThis.Netlify?.env?.get(key) || process.env[key] || '').trim();
+  const openaiKey = getSetting('OPENAI_API_KEY');
+  const classCode = getSetting('MIXER_CLASS_CODE');
+  const missing = [!openaiKey && 'OPENAI_API_KEY', !classCode && 'MIXER_CLASS_CODE'].filter(Boolean);
+  if (missing.length) {
+    return problem(503, 'Live voice setup is incomplete. Check ' + missing.join(' and ') + ' in Netlify and redeploy.');
+  }
   if (!timingSafeEqual(hash(request.headers.get('X-Mixer-Code') || ''), hash(classCode))) {
     return problem(403, 'That class access code is incorrect.');
   }

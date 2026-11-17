@@ -1,4 +1,16 @@
+export function microphoneMessage(error) {
+  const messages = {
+    NotAllowedError: 'Microphone access is blocked. Allow it in your browser’s site permissions, then retry.',
+    NotFoundError: 'No microphone was found. Connect or select a microphone, then retry.',
+    NotReadableError: 'The microphone could not start. Check your device settings or close other apps using it, then retry.'
+  };
+  return messages[error.name] || error.message;
+}
+
 export async function connectGuest({ guest, code, audio, signal, onStatus, onBusy, onClose }) {
+  if (!navigator.mediaDevices?.getUserMedia || !window.RTCPeerConnection) {
+    throw new Error('Live voice needs an up-to-date browser with microphone access over HTTPS.');
+  }
   const peer = new RTCPeerConnection();
   const channel = peer.createDataChannel('oai-events');
   let stream;
@@ -119,7 +131,6 @@ export async function connectGuest({ guest, code, audio, signal, onStatus, onBus
   } catch (error) {
     close();
     if (signal.aborted) return;
-    if (error.name === 'NotAllowedError') throw new Error('Microphone permission was denied. Allow access in your browser and retry.');
-    throw error;
+    throw new Error(microphoneMessage(error));
   }
 }

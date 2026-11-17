@@ -1,5 +1,5 @@
 import { canDos, goals, guests, questions } from './curriculum.js';
-import { connectGuest } from './live.js';
+import { connectGuest, microphoneMessage } from './live.js';
 
 const screen = document.querySelector('#screen');
 const progress = document.querySelector('#progress');
@@ -84,14 +84,19 @@ function welcome() {
 
 function speak(line, rate) {
   const engine = window.speechSynthesis;
-  const voice = engine?.getVoices().find(item => item.lang.toLowerCase().startsWith('fr') && item.localService);
-  if (!voice) {
-    status.textContent = 'A local French voice is unavailable. Read the reply below the question.';
+  const voices = engine?.getVoices().filter(item => /^fr(?:-|$)/i.test(item.lang)) || [];
+  const voice = voices.find(item => item.localService) || voices[0];
+  if (!engine || !window.SpeechSynthesisUtterance) {
+    status.textContent = 'This browser cannot play scripted speech. The French reply is shown on screen.';
     return;
   }
   const utterance = new SpeechSynthesisUtterance(line);
-  utterance.voice = voice;
-  utterance.lang = voice.lang;
+  if (voice) utterance.voice = voice;
+  utterance.lang = voice?.lang || 'fr-FR';
+  utterance.onerror = ({ error }) => {
+    if (error === 'canceled' || error === 'interrupted') return;
+    status.textContent = 'French speech could not play in this browser. Use live voice or enable a French text-to-speech voice in your device settings.';
+  };
   utterance.rate = rate;
   status.textContent = '';
   engine.cancel();
@@ -341,7 +346,7 @@ async function recordVoice() {
     mic?.getTracks().forEach(track => track.stop());
     restart.disabled = false;
     el('finish').disabled = false;
-    status.textContent = error.name === 'NotAllowedError' ? 'Allow microphone access to record your voice note.' : error.message;
+    status.textContent = microphoneMessage(error);
   } finally {
     button.disabled = false;
   }
