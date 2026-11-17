@@ -133,6 +133,17 @@ function guestScreen() {
     <ul id="goal-list"></ul>
     <p>You may use your first name. Leave out your last name and use made-up contact details when you speak or take notes.</p>
     <div class="card" id="conversation"></div>
+    <section class="card" aria-labelledby="phrase-bank">
+      <h2 id="phrase-bank">French phrase bank</h2>
+      <p>Try one of these aloud if you need help understanding the guest.</p>
+      <ul>
+        <li><strong lang="fr">Je ne comprends pas.</strong> (I don’t understand.)</li>
+        <li><strong lang="fr">Vous pouvez répéter, s’il vous plaît ?</strong> (Could you repeat that, please?)</li>
+        <li><strong lang="fr">Vous pouvez parler plus lentement ?</strong> (Could you speak more slowly?)</li>
+        <li><strong lang="fr">Ça veut dire quoi, … ?</strong> (What does … mean?)</li>
+        <li><strong lang="fr">Vous avez dit … ?</strong> (Did you say …?)</li>
+      </ul>
+    </section>
     <p>Say hello, ask three short questions, and say goodbye.</p>
     <div class="card">
       <label for="notes">Your notes (optional)</label>
