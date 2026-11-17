@@ -124,10 +124,12 @@ function guestScreen() {
     <p>Your mixer goals</p>
     <ul id="goal-list"></ul>
     <div class="card" id="conversation"></div>
-    <div class="card"><label for="notes">Your notes (optional)</label>
-      <textarea id="notes" rows="2" maxlength="600" placeholder="What might you have in common?"></textarea>
+    <p>Say hello, ask three short questions, and say goodbye.</p>
+    <div class="card">
+      <label for="notes">Your notes (optional)</label>
+      <p id="notes-help">If you discover something you have in common with this guest, write it in the box below. After you meet all three guests, your notes can help you choose whom you’d like to get to know better and name two things you have in common in your final French voice note.</p>
+      <textarea id="notes" aria-describedby="notes-help" rows="2" maxlength="600" placeholder="What do you have in common?"></textarea>
     </div>
-    <p>Say hello, ask three short questions, and say goodbye. If you find something you have in common, jot it down.</p>
     <button id="next" disabled>${step === guests.length ? 'Voice note & reflection' : 'Meet the next guest'}</button>`;
   selectedGoals.forEach(goal => {
     const item = document.createElement('li');
