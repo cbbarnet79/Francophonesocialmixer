@@ -7,7 +7,7 @@ export function microphoneMessage(error) {
   return messages[error.name] || error.message;
 }
 
-export async function connectGuest({ guest, code, audio, signal, onStatus, onBusy, onClose }) {
+export async function connectGuest({ guest, guestName, code, audio, signal, onStatus, onBusy, onClose }) {
   if (!navigator.mediaDevices?.getUserMedia || !window.RTCPeerConnection) {
     throw new Error('Live voice needs an up-to-date browser with microphone access over HTTPS.');
   }
@@ -31,7 +31,12 @@ export async function connectGuest({ guest, code, audio, signal, onStatus, onBus
   }
 
   const send = (type, details = {}) => channel.send(JSON.stringify({ type, ...details }));
-  const prompt = instructions => send('response.create', { response: { instructions } });
+  function prompt(text) {
+    send('conversation.item.create', {
+      item: { type: 'message', role: 'user', content: [{ type: 'input_text', text }] }
+    });
+    send('response.create');
+  }
   signal.addEventListener('abort', close, { once: true });
 
   try {
@@ -104,7 +109,7 @@ export async function connectGuest({ guest, code, audio, signal, onStatus, onBus
 
     onBusy(true);
     onStatus('The guest is saying hello…');
-    prompt('Greet the learner, say only your first name, and ask what their name is. Use simple French.');
+    prompt(`Start the mixer as ${guestName}. Say exactly: « Bonjour ! Je m’appelle ${guestName}. Et vous, comment vous appelez-vous ? »`);
 
     return {
       close,

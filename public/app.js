@@ -206,7 +206,7 @@ function guestScreen() {
     }, 28_000);
     try {
       const session = await connectGuest({
-        guest: step - 1, code, audio: el('guest-audio'), signal: connection.signal,
+        guest: step - 1, guestName: guest.name, code, audio: el('guest-audio'), signal: connection.signal,
         onStatus: value => { if (step === shownStep) status.textContent = value; },
         onBusy: value => {
           if (step !== shownStep || !el('connect')) return;
