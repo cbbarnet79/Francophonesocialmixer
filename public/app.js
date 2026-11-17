@@ -140,7 +140,7 @@ function guestScreen() {
         <li><strong lang="fr">Je ne comprends pas.</strong> (I don’t understand.)</li>
         <li><strong lang="fr">Vous pouvez répéter, s’il vous plaît ?</strong> (Could you repeat that, please?)</li>
         <li><strong lang="fr">Vous pouvez parler plus lentement ?</strong> (Could you speak more slowly?)</li>
-        <li><strong lang="fr">Ça veut dire quoi, … ?</strong> (What does … mean?)</li>
+        <li><strong lang="fr">Que signifie … ?</strong> (What does … mean?)</li>
         <li><strong lang="fr">Vous avez dit … ?</strong> (Did you say …?)</li>
       </ul>
     </section>
