@@ -199,7 +199,7 @@ function guestScreen() {
   }
 
   el('conversation').innerHTML = `
-    <p>Connect, then start and end each speaking turn when you’re ready. Your microphone audio is sent to OpenAI during live conversation.</p>
+    <p>Connect and answer the guest’s two opening questions. Then it’s your turn to ask three short questions. Use Start speaking and Finish speaking for each turn. Your microphone audio is sent to OpenAI during live conversation.</p>
     <p>You have up to four minutes with this guest once you connect, including any pauses. Move on when you’re ready. If the guest asks you to repeat, try saying it more slowly or using simpler words.</p>
     <button id="connect">Connect microphone</button>
     <button id="demo" class="secondary">Use scripted demo</button>
