@@ -7,7 +7,13 @@ export function microphoneMessage(error) {
   return messages[error.name] || error.message;
 }
 
-export async function connectGuest({ guest, guestName, code, audio, signal, onStatus, onBusy, onClose }) {
+function isClarificationRequest(transcript) {
+  const words = transcript.toLowerCase().normalize('NFD')
+    .replace(/\p{M}/gu, '').replace(/[’']/g, ' ');
+  return /^\s*comment[?!.\s]*$/i.test(words) || /\b(repet(?:e[rz]?|ition)|plus (?:lentement|doucement|simplement)|moins vite|je (?:ne )?comprends pas|j ai pas compris|je n ai pas compris|(?:que|qu est ce que) (?:signifie|veut dire)|ca veut dire quoi|ca signifie quoi|vous avez dit|reformul(?:er|ez)|clarifi(?:er|ez)|(?:pouvez|pourriez) (?:vous )?expliquer)\b/.test(words);
+}
+
+export async function connectGuest({ guest, guestName, code, audio, signal, onStatus, onBusy, onClose, onReplyHelp }) {
   if (!navigator.mediaDevices?.getUserMedia || !window.RTCPeerConnection) {
     throw new Error('Live voice needs an up-to-date browser with microphone access over HTTPS.');
   }
@@ -18,6 +24,22 @@ export async function connectGuest({ guest, guestName, code, audio, signal, onSt
   let startedAt = 0;
   let commitTimer;
   let sessionTimer;
+  const turns = [{ repair: false }];
+  let latestReply = '';
+  let replyFinished = false;
+
+  function offerReply() {
+    let repairs = 0;
+    for (let i = turns.length - 1; i >= 0 && turns[i].repair === true; i--) repairs++;
+    onReplyHelp(replyFinished && repairs >= 2 ? latestReply : '');
+  }
+
+  function beginReply(turn) {
+    turns.push(turn);
+    latestReply = '';
+    replyFinished = false;
+    offerReply();
+  }
 
   function close(connectionLost = false) {
     if (closed) return;
@@ -31,7 +53,8 @@ export async function connectGuest({ guest, guestName, code, audio, signal, onSt
   }
 
   const send = (type, details = {}) => channel.send(JSON.stringify({ type, ...details }));
-  function prompt(text) {
+  function prompt(text, repair = false) {
+    if (repair) beginReply({ repair: true });
     send('conversation.item.create', {
       item: { type: 'message', role: 'user', content: [{ type: 'input_text', text }] }
     });
@@ -59,16 +82,39 @@ export async function connectGuest({ guest, guestName, code, audio, signal, onSt
 
     channel.onmessage = ({ data }) => {
       const event = JSON.parse(data);
-      if (event.type === 'input_audio_buffer.committed') send('response.create');
-      if (event.type === 'response.done' && event.response.status !== 'completed') {
-        onBusy(false);
-        onStatus('The guest could not reply. Try again.');
+      if (closed) return;
+      if (event.type === 'input_audio_buffer.committed') {
+        beginReply({ itemId: event.item_id });
+        send('response.create');
+      }
+      if (event.type === 'conversation.item.input_audio_transcription.completed') {
+        const turn = turns.find(turn => turn.itemId === event.item_id);
+        if (turn) {
+          turn.repair = isClarificationRequest(event.transcript);
+          offerReply();
+        }
+      }
+      if (event.type === 'response.done') {
+        if (event.response.status === 'completed') {
+          latestReply = event.response.output.flatMap(item => item.content || [])
+            .filter(part => part.type === 'audio' || part.type === 'output_audio')
+            .map(part => part.transcript).filter(Boolean).join(' ').trim();
+        } else {
+          turns[turns.length - 1].repair = false;
+          onBusy(false);
+          onStatus('The guest could not reply. Try again.');
+        }
       }
       if (event.type === 'output_audio_buffer.stopped') {
+        replyFinished = true;
+        offerReply();
         onBusy(false);
         onStatus('Your turn. Start speaking when you’re ready.');
       }
       if (event.type === 'error') {
+        turns[turns.length - 1].repair = false;
+        latestReply = '';
+        offerReply();
         onBusy(false);
         onStatus('Try again and speak for at least a moment before ending your turn.');
       }
@@ -130,7 +176,7 @@ export async function connectGuest({ guest, guestName, code, audio, signal, onSt
         }, 250);
       },
       repeat(slower) {
-        prompt(slower ? 'Repeat or rephrase your last reply in simpler French with deliberate pauses.' : 'Repeat your last reply slowly in French.');
+        prompt(slower ? 'Repeat or rephrase your last reply in simpler French with deliberate pauses.' : 'Repeat your last reply slowly in French.', true);
       }
     };
   } catch (error) {

@@ -147,6 +147,16 @@ function guestScreen() {
       <ul id="goal-list"></ul>
     </section>
     <div class="card" id="conversation"></div>
+    <details class="card">
+      <summary>Need help asking a question?</summary>
+      <p>After answering a guest’s question, you can ask it back with <strong lang="fr">Et vous ?</strong> (And you?). To ask about something new, try one of these aloud or adapt it.</p>
+      <ul>
+        <li lang="fr">Vous venez d’où ?</li>
+        <li lang="fr">Quelles langues vous parlez ?</li>
+        <li lang="fr">Vous travaillez où ?</li>
+        <li lang="fr">Qu’est-ce que vous aimez faire ?</li>
+      </ul>
+    </details>
     <section class="card" aria-labelledby="phrase-bank">
       <h2 id="phrase-bank">French phrase bank</h2>
       <h3>Ask for clarification or repetition</h3>
@@ -236,7 +246,23 @@ function guestScreen() {
       <button id="turn" disabled>Start speaking</button>
       <button id="again" class="secondary" disabled>Repeat</button>
       <button id="slower" class="secondary" disabled>Slower / simpler</button>
-    </div>`;
+    </div>
+    <button id="show-reply" type="button" class="secondary" aria-controls="guest-reply" aria-expanded="false" hidden>Still stuck? Show this reply in French</button>
+    <p id="guest-reply" lang="fr" aria-live="polite"></p>`;
+  const showReply = el('show-reply');
+  const guestReply = el('guest-reply');
+  let replyText = '';
+  function offerReply(text) {
+    if (text === replyText) return;
+    replyText = text;
+    guestReply.textContent = '';
+    showReply.hidden = !text;
+    showReply.setAttribute('aria-expanded', 'false');
+  }
+  showReply.onclick = () => {
+    guestReply.textContent = replyText;
+    showReply.setAttribute('aria-expanded', 'true');
+  };
   function updateButtons() {
     el('turn').disabled = !live || busy;
     el('again').disabled = !live || busy || talking;
@@ -263,6 +289,7 @@ function guestScreen() {
     try {
       const session = await connectGuest({
         guest: step - 1, guestName: guest.name, code, audio: el('guest-audio'), signal: connection.signal,
+        onReplyHelp: offerReply,
         onStatus: value => { if (step === shownStep) status.textContent = value; },
         onBusy: value => {
           if (step !== shownStep || !el('connect')) return;
@@ -279,6 +306,7 @@ function guestScreen() {
           button.disabled = false;
           if (connectionLost) el('demo').hidden = false;
           el('voice-actions').hidden = true;
+          offerReply('');
           updateButtons();
         }
       });
