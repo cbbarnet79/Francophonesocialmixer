@@ -144,11 +144,14 @@ function guestScreen() {
         <li><strong lang="fr">Que signifie … ?</strong> (What does … mean?)</li>
         <li><strong lang="fr">Vous avez dit … ?</strong> (Did you say …?)</li>
       </ul>
-      <h3>Ask the guest a question</h3>
-      <p>When it’s your turn, try one of these if you’re unsure what to ask.</p>
+      <h3>Build your own question</h3>
+      <p>Choose one or two topics you’re curious about. Use the French words or sentence starter to make your own question aloud. If you already know the answer, choose a different topic.</p>
       <ul>
-        <li><strong lang="fr">Qu’est-ce que vous aimez faire ?</strong> (What do you like to do?)</li>
-        <li><strong lang="fr">Quelles langues parlez-vous ?</strong> (What languages do you speak?)</li>
+        <li><strong>Origin</strong> <span lang="fr">D’où … ?</span> · <span lang="fr">venir, pays, ville</span></li>
+        <li><strong>Languages</strong> <span lang="fr">Quelles langues … ?</span> · <span lang="fr">parler</span></li>
+        <li><strong>Work</strong> <span lang="fr">Où … ? / Quelle … ?</span> · <span lang="fr">travailler, profession</span></li>
+        <li><strong>Interests</strong> <span lang="fr">Qu’est-ce que … ?</span> · <span lang="fr">aimer, faire</span></li>
+        <li><strong>Learning a language</strong> <span lang="fr">Pourquoi … ?</span> · <span lang="fr">apprendre, une langue</span></li>
       </ul>
     </section>
     <p>Say hello, ask one or two short questions toward the end, and say goodbye.</p>
