@@ -1,4 +1,5 @@
 import { canDos, guests, questions } from './curriculum.js';
+import { requestFeedback } from './feedback.js';
 import { connectGuest, microphoneMessage } from './live.js';
 
 const screen = document.querySelector('#screen');
@@ -19,6 +20,7 @@ let audioBlob;
 let audioUrl;
 let reflectionUrl;
 let recordTimer;
+let feedbackRequest;
 const notes = new Map();
 
 function clearMedia() {
@@ -47,7 +49,7 @@ function welcome() {
     <h1>Francophone<br>Social Mixer</h1>
     <p>Meet three French-speaking guests. Find someone you’d like to get to know better and two things you have in common.</p>
     <p><strong>Allow about 20 minutes.</strong> Each of the three live guest sessions lasts up to four minutes (up to 12 minutes total). The 20 minutes also includes choosing your goals, recording your final French voice note, and completing the Can-Do reflection.</p>
-    <p>Introduce yourself in French. You can make up personal details.</p>
+    <p>Introduce yourself in French using a made-up name and details. Use fictional street addresses, phone numbers, and email addresses if you practice sharing contact information. Keep real personal details out of conversations, notes, and recordings.</p>
     <form id="welcome">
       <fieldset aria-describedby="goal-instructions">
         <legend>What would you like to work on most?</legend>
@@ -124,6 +126,7 @@ function guestScreen() {
     <h1 lang="fr">${guest.name}</h1>
     <p>Your mixer goals</p>
     <ul id="goal-list"></ul>
+    <p>Use made-up personal and contact details when you speak or take notes.</p>
     <div class="card" id="conversation"></div>
     <p>Say hello, ask three short questions, and say goodbye.</p>
     <div class="card">
@@ -271,6 +274,7 @@ function finalScreen() {
       <div class="card">
         <h2>French voice note</h2>
         <p>You have up to one minute to record. In French, name the guest you’d like to get to know better and say two things you have in common.</p>
+        <p>Use made-up personal details. Leave out real names, street addresses, phone numbers, and email addresses.</p>
         <p lang="fr">Je choisis… Moi aussi, … Moi aussi, …</p>
         <button id="record" type="button">Record voice note</button>
         <audio id="playback" controls hidden></audio>
@@ -282,7 +286,7 @@ function finalScreen() {
         <select id="can-do" required><option value="">Select a skill</option>
           ${canDos.map(item => `<option value="${item}">${item}${selectedGoals.includes(item) ? " (starting goal)" : ""}</option>`).join('')}
         </select>
-        <label for="reflection">Describe one specific moment when you used this skill. Write in English or French.</label>
+        <label for="reflection">Describe one specific moment when you used this skill. Write in English or French and leave out real personal details.</label>
         <textarea id="reflection" rows="3" maxlength="800" required></textarea>
         <small>Example: I asked a guest to repeat where she was from, and I understood her the second time.</small>
         <label for="next-goal">What’s one thing you’d like to try next? (optional)</label>
@@ -292,6 +296,15 @@ function finalScreen() {
         <button id="finish" type="submit">Prepare files for my instructor</button>
       </div>
     </form>
+    <div class="card" id="feedback" hidden>
+      <h2>Two suggestions for your spoken French</h2>
+      <p>Optional. Review your voice note for real personal details before sending it. If you ask for AI feedback, OpenAI receives your voice note and selected Can-Do. We don’t send your guest notes or written reflection.</p>
+      <label id="feedback-code-label" for="feedback-code" hidden>Class access code</label>
+      <input id="feedback-code" type="password" maxlength="150" hidden>
+      <button id="get-feedback" type="button">Get AI feedback</button>
+      <p id="feedback-status" role="status"></p>
+      <ol id="feedback-suggestions"></ol>
+    </div>
     <div class="card" id="delivery" hidden>
       <h2>Share with your instructor</h2>
       <p>Download both files and submit them together to your instructor through Matrix or as directed in class.</p>
@@ -306,7 +319,10 @@ function finalScreen() {
     el('notes-review').hidden = false;
   });
   el('record').onclick = recordVoice;
-  el('final').oninput = () => { el('delivery').hidden = true; };
+  el('final').oninput = resetDelivery;
+  el('feedback-code-label').hidden = Boolean(code);
+  el('feedback-code').hidden = Boolean(code);
+  el('get-feedback').onclick = showFeedback;
   el('final').onsubmit = event => {
     event.preventDefault();
     if (!audioBlob?.size) {
@@ -354,7 +370,7 @@ async function recordVoice() {
       el('finish').disabled = false;
       status.textContent = 'Listen to your recording before submitting.';
     };
-    el('delivery').hidden = true;
+    resetDelivery();
     recording.start();
     recordTimer = setTimeout(() => {
       if (recording.state === 'recording') recording.stop();
@@ -384,11 +400,59 @@ function prepareDelivery() {
   el('reflection-file').href = reflectionUrl;
   el('reflection-file').download = 'mixer-reflection.txt';
   el('delivery').hidden = false;
-  el('voice-file').focus();
+  el('feedback').hidden = false;
+  el('get-feedback').focus();
+}
+
+function resetDelivery() {
+  feedbackRequest?.abort();
+  feedbackRequest = undefined;
+  el('feedback').hidden = true;
+  el('delivery').hidden = true;
+  el('get-feedback').disabled = false;
+  el('feedback-status').textContent = '';
+  el('feedback-suggestions').replaceChildren();
+}
+
+async function showFeedback() {
+  const accessCode = code || el('feedback-code').value.trim();
+  const message = el('feedback-status');
+  const button = el('get-feedback');
+  if (!accessCode) {
+    message.textContent = 'Enter your class access code to get AI feedback.';
+    el('feedback-code').focus();
+    return;
+  }
+  const request = new AbortController();
+  feedbackRequest = request;
+  button.disabled = true;
+  message.textContent = 'Preparing two suggestions…';
+  try {
+    const signal = AbortSignal.any([request.signal, AbortSignal.timeout(35000)]);
+    const suggestions = await requestFeedback(audioBlob, canDos.indexOf(el('can-do').value), accessCode, signal);
+    if (request.signal.aborted) return;
+    for (const suggestion of suggestions) {
+      const item = document.createElement('li');
+      item.textContent = suggestion;
+      el('feedback-suggestions').append(item);
+    }
+    message.textContent = 'Your two suggestions are ready.';
+  } catch (error) {
+    if (request.signal.aborted) return;
+    message.textContent = ['EncodingError', 'NotSupportedError', 'ReferenceError'].includes(error.name)
+      ? 'This browser could not prepare the recording for feedback. You can still download your work.'
+      : error.name === 'TimeoutError' ? 'Feedback timed out. Try again or download your work.' : error.message;
+    button.disabled = false;
+  } finally {
+    if (feedbackRequest === request) feedbackRequest = undefined;
+  }
 }
 
 restart.onclick = () => {
   if (!window.confirm('Start over and clear this session?')) return;
+  feedbackRequest?.abort();
+  feedbackRequest = undefined;
+  code = undefined;
   if (audioUrl) URL.revokeObjectURL(audioUrl);
   if (reflectionUrl) URL.revokeObjectURL(reflectionUrl);
   audioBlob = null;
@@ -400,6 +464,9 @@ restart.onclick = () => {
   draw();
 };
 
-window.addEventListener('pagehide', clearMedia);
+window.addEventListener('pagehide', () => {
+  clearMedia();
+  feedbackRequest?.abort();
+});
 window.speechSynthesis?.getVoices();
 draw();
