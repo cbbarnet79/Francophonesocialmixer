@@ -1,3 +1,4 @@
+import { buildReflectionPdf } from './reflection-pdf.mjs';
 import { canDos, guests, questions } from './curriculum.js';
 import { requestFeedback } from './feedback.js';
 import { connectGuest, microphoneMessage } from './live.js';
@@ -358,7 +359,7 @@ function finalScreen() {
     <div class="card" id="delivery" hidden>
       <h2>Share with your instructor</h2>
       <p>Download your final French voice note and written reflection and submit them through Matrix or as directed in class. Once you share them, your instructor can listen to the voice note and read your reflection to give you feedback. The mixer does not share recordings or transcripts of your guest conversations with your instructor.</p>
-      <div class="actions"><a class="download" id="voice-file">Download voice note</a><a class="download" id="reflection-file">Download reflection</a></div>
+      <div class="actions"><a class="download" id="voice-file">Download voice note</a><a class="download" id="reflection-file">Download reflection (PDF)</a></div>
     </div>`;
   guests.forEach((guest, index) => {
     const entry = notes.get(index + 1)?.trim();
@@ -441,14 +442,16 @@ function prepareDelivery() {
   const mime = audioBlob.type.split(';')[0];
   const extension = mime === 'audio/mp4' ? 'm4a' : mime === 'audio/ogg' ? 'ogg' : 'webm';
   if (reflectionUrl) URL.revokeObjectURL(reflectionUrl);
-  reflectionUrl = URL.createObjectURL(new Blob([
-    'Mixer goals:\n' + selectedGoals.map(goal => '- ' + goal).join('\n') + '\n\nCan-Do: ' + el('can-do').value + '\n\n' + el('reflection').value.trim() + '\n',
-    'Next goal: ' + el('next-goal').value.trim() + '\n'
-  ], { type: 'text/plain' }));
+  reflectionUrl = URL.createObjectURL(buildReflectionPdf({
+    goals: selectedGoals,
+    canDo: el('can-do').value,
+    reflection: el('reflection').value.trim(),
+    nextGoal: el('next-goal').value.trim()
+  }));
   el('voice-file').href = audioUrl;
   el('voice-file').download = 'mixer-voice-note.' + extension;
   el('reflection-file').href = reflectionUrl;
-  el('reflection-file').download = 'mixer-reflection.txt';
+  el('reflection-file').download = 'mixer-reflection.pdf';
   el('delivery').hidden = false;
   el('feedback').hidden = false;
   el('get-feedback').focus();
