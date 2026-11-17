@@ -11,6 +11,16 @@ let step = 0;
 let mode;
 let selectedGoals = [];
 const goalLimit = 3;
+const goalCues = new Map([
+  [canDos[0], 'Greet the guest, introduce yourself, and say goodbye before you move on.'],
+  [canDos[1], 'Find out which languages you and this guest both speak.'],
+  [canDos[2], 'Share one detail about yourself and ask the guest about their work or family.'],
+  [canDos[3], 'Practice asking for or giving a made-up phone number or email address.'],
+  [canDos[4], 'Tell the guest one thing about another person you met.'],
+  [canDos[5], 'Tell the guest one reason you’re learning French.'],
+  [canDos[6], 'Mention a real or made-up event and tell the guest where and when it takes place.'],
+  [canDos[7], 'If you miss a word or detail, ask the guest to repeat, slow down, or clarify.']
+]);
 let code;
 let live;
 let connection;
@@ -129,9 +139,11 @@ function guestScreen() {
   screen.innerHTML = `
     <small>Guest ${step} of ${guests.length}</small>
     <h1 lang="fr">${guest.name}</h1>
-    <p>Your mixer goals</p>
-    <ul id="goal-list"></ul>
     <p>You may use your first name. Leave out your last name and use made-up contact details when you speak or take notes.</p>
+    <section class="card" aria-labelledby="goal-heading">
+      <h2 id="goal-heading">Your mixer goals</h2>
+      <ul id="goal-list"></ul>
+    </section>
     <div class="card" id="conversation"></div>
     <section class="card" aria-labelledby="phrase-bank">
       <h2 id="phrase-bank">French phrase bank</h2>
@@ -163,7 +175,11 @@ function guestScreen() {
     <button id="next" disabled>${step === guests.length ? 'Voice note & reflection' : 'Meet the next guest'}</button>`;
   selectedGoals.forEach(goal => {
     const item = document.createElement('li');
-    item.textContent = goal;
+    const title = document.createElement('strong');
+    title.textContent = goal;
+    const cue = document.createElement('p');
+    cue.textContent = 'Try this: ' + goalCues.get(goal);
+    item.append(title, cue);
     el('goal-list').append(item);
   });
   el('notes').value = notes.get(shownStep) || '';
