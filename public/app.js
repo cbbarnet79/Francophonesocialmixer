@@ -46,6 +46,7 @@ function welcome() {
   screen.innerHTML = `
     <h1>Francophone<br>Social Mixer</h1>
     <p>Meet three French-speaking guests. Find someone you’d like to get to know better and two things you have in common.</p>
+    <p><strong>Allow about 20 minutes.</strong> Each of the three live guest sessions lasts up to four minutes (up to 12 minutes total). The 20 minutes also includes choosing your goals, recording your final French voice note, and completing the Can-Do reflection.</p>
     <p>Introduce yourself in French. You can make up personal details.</p>
     <form id="welcome">
       <fieldset aria-describedby="goal-instructions">
@@ -180,6 +181,7 @@ function guestScreen() {
 
   el('conversation').innerHTML = `
     <p>Connect, then start and end each speaking turn when you’re ready. Your microphone audio is sent to OpenAI during live conversation.</p>
+    <p>You have up to four minutes with this guest once you connect, including any pauses. Move on when you’re ready.</p>
     <button id="connect">Connect microphone</button>
     <button id="demo" class="secondary">Use scripted demo</button>
     <audio id="guest-audio" class="remote" autoplay playsinline></audio>
@@ -268,7 +270,7 @@ function finalScreen() {
     <form id="final">
       <div class="card">
         <h2>French voice note</h2>
-        <p>Name the guest you’d like to get to know better and say two things you have in common.</p>
+        <p>You have up to one minute to record. In French, name the guest you’d like to get to know better and say two things you have in common.</p>
         <p lang="fr">Je choisis… Moi aussi, … Moi aussi, …</p>
         <button id="record" type="button">Record voice note</button>
         <audio id="playback" controls hidden></audio>
