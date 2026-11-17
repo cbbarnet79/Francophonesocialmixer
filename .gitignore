@@ -1,0 +1,4 @@
+.codex/
+.netlify/
+node_modules/
+.env*
