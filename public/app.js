@@ -70,7 +70,7 @@ function welcome() {
     <form id="welcome">
       <fieldset aria-describedby="goal-instructions">
         <legend>What would you like to work on most?</legend>
-        <p id="goal-instructions">These Can-Do statements describe skills you’ve practiced in French Beginner 1. Select up to three to focus on during the mixer.</p>
+        <p id="goal-instructions">These Can-Do statements describe skills you’ve practiced in French Beginner 1. Select at least one and up to three before continuing.</p>
         ${canDos.map((item, i) => `<label class="choice"><input name="goal" type="checkbox" value="${i}"><span>${item}</span></label>`).join('')}
         <p id="goal-count" role="status">0 of ${goalLimit} selected</p>
       </fieldset>
@@ -163,6 +163,7 @@ function guestScreen() {
       <p>Try one of these aloud if you need help understanding the guest.</p>
       <ul>
         <li><strong lang="fr">Je ne comprends pas.</strong> (I don’t understand.)</li>
+        <li><strong lang="fr">Vous pouvez épeler votre nom de famille, s’il vous plaît ?</strong> (Could you spell your last name, please?)</li>
         <li><strong lang="fr">Vous pouvez répéter, s’il vous plaît ?</strong> (Could you repeat that, please?)</li>
         <li><strong lang="fr">Vous pouvez parler plus lentement ?</strong> (Could you speak more slowly?)</li>
         <li><strong lang="fr">Que signifie … ?</strong> (What does … mean?)</li>
@@ -206,7 +207,7 @@ function guestScreen() {
   }
 
   if (mode === 'demo') {
-    let line = 'Bonjour ! Je m’appelle ' + guest.name + '. Je vous écoute.';
+    let line = 'Bonjour ! Je m’appelle ' + guest.name + ' ' + guest.lastName + '. ' + [...guest.lastName.toUpperCase()].slice(0, 3).join(' - ') + '… Vous voulez toutes les lettres ? Oui ou non ?';
     el('conversation').innerHTML = `
       <p>Say your introduction or question aloud, then use the buttons to hear a scripted reply.</p>
       <button id="greet" class="secondary">Hear the greeting</button>
@@ -223,7 +224,7 @@ function guestScreen() {
       speak(line, rate);
     }
     el('greet').onclick = () => {
-      line = 'Bonjour ! Je m’appelle ' + guest.name + '. Je vous écoute.';
+      line = 'Bonjour ! Je m’appelle ' + guest.name + ' ' + guest.lastName + '. ' + [...guest.lastName.toUpperCase()].slice(0, 3).join(' - ') + '… Vous voulez toutes les lettres ? Oui ou non ?';
       play(.84);
     };
     el('ask').onclick = () => {
@@ -237,7 +238,7 @@ function guestScreen() {
   }
 
   el('conversation').innerHTML = `
-    <p>Connect and answer three short questions from the guest, starting with your name. When the guest says « À vous ! », ask one or two short questions of your own. Use Start speaking and Finish speaking for each turn. Your microphone audio is sent to OpenAI during live conversation.</p>
+    <p>Connect and answer three short questions from the guest, starting with your name. After the guest’s opening questions, ask one or two short questions of your own. Use Start speaking and Finish speaking for each turn. Your microphone audio is sent to OpenAI during live conversation.</p>
     <p>You have up to four minutes with this guest once you connect, including any pauses. Move on when you’re ready. If the guest asks you to repeat, try saying it more slowly or using simpler words.</p>
     <button id="connect">Connect microphone</button>
     <button id="demo" class="secondary" hidden>Use scripted demo</button>
@@ -288,7 +289,7 @@ function guestScreen() {
     }, 28_000);
     try {
       const session = await connectGuest({
-        guest: step - 1, guestName: guest.name, code, audio: el('guest-audio'), signal: connection.signal,
+        guest: step - 1, guestName: guest.name + ' ' + guest.lastName, code, audio: el('guest-audio'), signal: connection.signal,
         onReplyHelp: offerReply,
         onStatus: value => { if (step === shownStep) status.textContent = value; },
         onBusy: value => {

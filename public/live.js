@@ -155,7 +155,7 @@ export async function connectGuest({ guest, guestName, code, audio, signal, onSt
 
     onBusy(true);
     onStatus('The guest is saying hello…');
-    prompt(`Start the mixer as ${guestName}. Say exactly: « Bonjour ! Je m’appelle ${guestName}. Comment vous appelez-vous ? »`);
+    prompt(`Start the mixer as ${guestName}. Say exactly: « Bonjour ! Je m’appelle ${guestName}. » Then model the first three letters of your last name using French letter names and ask: « Vous voulez toutes les lettres ? Oui ou non ? »`);
 
     return {
       close,

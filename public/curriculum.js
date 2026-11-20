@@ -10,12 +10,13 @@ export const canDos = [
 ];
 
 export const guests = [
-  { name: 'Samira', origin: 'Rabat', languages: 'le français et l’arabe', job: 'professeure', interests: 'le cinéma et la cuisine', reason: 'pour voyager', voice: 'marin', color: 'rose' },
-  { name: 'Louis', origin: 'Montréal', languages: 'le français et l’anglais', job: 'cuisinier', interests: 'la musique et le vélo', reason: 'pour parler avec des amis', voice: 'cedar', color: 'green' },
-  { name: 'Awa', origin: 'Dakar', languages: 'le français, le wolof et l’anglais', job: 'photographe', interests: 'le cinéma et la musique', reason: 'pour le travail', voice: 'coral', color: 'gold' }
+  { name: 'Samira', lastName: 'Bennani', origin: 'Rabat, au Maroc', languages: 'le français et l’arabe', job: 'professeure', interests: 'le cinéma et la cuisine', reason: 'pour voyager', voice: 'marin', color: 'rose' },
+  { name: 'Louis', lastName: 'Tremblay', origin: 'Montréal, au Québec, au Canada', languages: 'le français et l’anglais', job: 'cuisinier', interests: 'la musique et le vélo', reason: 'pour parler avec des amis', voice: 'cedar', color: 'green' },
+  { name: 'Awa', lastName: 'Diop', origin: 'Dakar, au Sénégal', languages: 'le français, le wolof et l’anglais', job: 'photographe', interests: 'le cinéma et la musique', reason: 'pour le travail', voice: 'coral', color: 'gold' }
 ];
 
 export const questions = [
+  ['Vous pouvez épeler votre nom de famille, s’il vous plaît ?', g => 'Oui ! ' + [...g.lastName.toUpperCase()].join(' - ') + '.'],
   ['Vous venez d’où ?', g => 'Je viens de ' + g.origin + '.'],
   ['Vous parlez quelles langues ?', g => 'Je parle ' + g.languages + '.'],
   ['Qu’est-ce que vous faites dans la vie ?', g => 'Je suis ' + g.job + '.'],
